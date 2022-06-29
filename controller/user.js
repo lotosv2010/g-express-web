@@ -55,3 +55,14 @@ exports.showSettings = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.logout = (req, res, next) => {
+  try {
+    // 清除登陆状态
+    req.session.user = null;
+    // 跳转到首页
+    res.redirect('/');
+  } catch (error) {
+    next(error);
+  }
+};
