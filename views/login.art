@@ -2,33 +2,33 @@
 {{extend './layout/layout.art'}}
 
 {{block 'body'}}
-<div class="auth-page">
+<div class="auth-page" id="login">
   <div class="container page">
     <div class="row">
-
+      
       <div class="col-md-6 offset-md-3 col-xs-12">
         <h1 class="text-xs-center">{{ title }}</h1>
         {{if !isLogin}}
           <p class="text-xs-center">
-            <a href="">Have an account?</a>
+            <a href="/login">Have an account?</a>
           </p>
 
-          <ul class="error-messages">
-            <li>That email is already taken</li>
+          <ul class="error-messages" v-for="error in errors">
+            <li :key="error.param">${error.msg}</li>
           </ul>
         {{/if}}
-        <form>
+        <form @submit.prevent="handleSubmit">
           {{if !isLogin}}
             <fieldset class="form-group">
-              <input class="form-control form-control-lg" type="text" placeholder="Your Name">
+              <input v-model="user.username" class="form-control form-control-lg" type="text" placeholder="Your Name">
             </fieldset>
           {{/if}}
 
           <fieldset class="form-group">
-            <input class="form-control form-control-lg" type="text" placeholder="Email">
+            <input v-model="user.email" class="form-control form-control-lg" type="text" placeholder="Email">
           </fieldset>
           <fieldset class="form-group">
-            <input class="form-control form-control-lg" type="password" placeholder="Password">
+            <input v-model="user.password" class="form-control form-control-lg" type="password" placeholder="Password">
           </fieldset>
           <button class="btn btn-lg btn-primary pull-xs-right">
             {{ title }}
@@ -39,4 +39,41 @@
     </div>
   </div>
 </div>
+{{/block}}
+
+{{block 'script'}}
+<script>
+  (() => {
+    const app = new Vue({
+      el: '#login',
+      data: {
+        user: {
+          username: '',
+          email: '',
+          password: ''
+        },
+        errors: []
+      },
+      methods: {
+        async handleSubmit() {
+          try {
+            const { data } = await axios.post('/register', {
+              user: this.user
+            });
+            console.log(data);
+            // 清除错误信息
+            this.errors = [];
+            // 跳转到首页
+            window.location.href = '/';
+          } catch (error) {
+            if(error?.response?.status !== 201) {
+              const errors = error?.response?.data?.error;
+              this.errors = errors;
+            }
+          }
+        }
+      },
+    });
+  })();
+</script>
 {{/block}}
