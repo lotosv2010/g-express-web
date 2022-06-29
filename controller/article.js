@@ -2,7 +2,29 @@ const { Article } = require('../model');
 
 exports.showHome = async (req, res, next) => {
   try {
-    res.render('index');
+    const { tag, favorited, pageSize = 5, page = 1} = req.query;
+    const filter = {};
+    if(tag) {
+      filter.tagList = tag
+    }
+    if(req?.session?.user) {
+      filter.author = req?.session?.user?._id;
+    }
+    const articles = await Article.find(filter)
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .sort({
+        createAt: -1
+      })
+      .populate('author');
+    const articleCount = await Article.countDocuments(filter);
+    res.render('index', {
+      articles,
+      articleCount,
+      page,
+      pageSize,
+      totalPage: Math.ceil(articleCount / pageSize)
+    });
   } catch (error) {
     next(error);
   }

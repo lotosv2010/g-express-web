@@ -1,10 +1,11 @@
 module.exports = {
   createAt: {
     type: Date, 
-    default: Date.now
+    default: new Date
   },
   updatedAt: {
     type: Date,
-    default: Date.now
+    default: new Date
   }
+  // timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' }
 }
