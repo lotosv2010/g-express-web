@@ -36,7 +36,7 @@ exports.login = [
   ]),
   validate([
     body('user.email').custom(async (email, { req }) => {
-      const user = await User.findOne({ email }, { email: 1, username: 1, password: 1, bio: 1, image: 1});
+      const user = await User.findOne({ email }, { _id: 1, email: 1, username: 1, password: 1, bio: 1, image: 1});
       if (!user) {
         return Promise.reject('用户不存在');
       }

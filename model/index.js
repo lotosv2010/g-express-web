@@ -11,4 +11,5 @@ conn.on('open', () => console.log(chalk.green.bold('数据库连接成功!')));
 // 组织导出模型类
 module.exports = {
   User: conn.model('User', require('./user')),
+  Article: conn.model('Article', require('./article')),
 }
