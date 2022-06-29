@@ -12,11 +12,11 @@
           <p class="text-xs-center">
             <a href="/login">Have an account?</a>
           </p>
-
-          <ul class="error-messages" v-for="error in errors">
-            <li :key="error.param">${error.msg}</li>
-          </ul>
         {{/if}}
+        <ul class="error-messages" v-for="error in errors">
+          <li :key="error.param">${error.msg}</li>
+        </ul>
+        
         <form @submit.prevent="handleSubmit">
           {{if !isLogin}}
             <fieldset class="form-group">
@@ -57,7 +57,8 @@
       methods: {
         async handleSubmit() {
           try {
-            const { data } = await axios.post('/register', {
+            const url = window.location.pathname === '/login' ? '/login' : '/register';
+            const { data } = await axios.post(url, {
               user: this.user
             });
             console.log(data);
@@ -66,6 +67,7 @@
             // 跳转到首页
             window.location.href = '/';
           } catch (error) {
+            console.dir(error)
             if(error?.response?.status !== 201) {
               const errors = error?.response?.data?.error;
               this.errors = errors;

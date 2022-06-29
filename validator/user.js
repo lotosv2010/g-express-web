@@ -27,3 +27,28 @@ exports.register = validate([
       }
     })
 ]);
+
+exports.login = [
+  validate([
+    //! 1.配置验证规则
+    body('user.password').notEmpty().withMessage('密码不能为空'),
+    body('user.email').notEmpty().withMessage('邮箱不能为空').isEmail().withMessage('邮箱格式不正确')
+  ]),
+  validate([
+    body('user.email').custom(async (email, { req }) => {
+      const user = await User.findOne({ email }, { email: 1, username: 1, password: 1, bio: 1, image: 1});
+      if (!user) {
+        return Promise.reject('用户不存在');
+      }
+      // 将数据挂载到请求对象中，后续的中间件可以直接使用
+      req.user = user;
+    })
+  ]),
+  validate([
+    body('user.password').custom(async (password, { req }) => {
+      if (md5(password) !== req.user.password) {
+        return Promise.reject('密码错误');
+      }
+    })
+  ])
+];

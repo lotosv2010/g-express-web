@@ -66,3 +66,18 @@ exports.logout = (req, res, next) => {
     next(error);
   }
 };
+
+exports.login = async (req, res, next) => {
+  try {
+    const user = req.user;
+    // 保持登陆状态
+    req.session.user = user;
+    // 跳转到首页
+    Reflect.deleteProperty(user, 'password');
+    res.status(200).json({
+      user
+    });
+  } catch (error) {
+    next(error);
+  }
+};

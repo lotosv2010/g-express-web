@@ -22,5 +22,7 @@ router.post('/register', userValidator.register, userCtrl.register);
 
 router.get('/logout', userCtrl.logout);
 
+router.post('/login', noAuth , userValidator.login, userCtrl.login);
+
 
 module.exports = router;
